@@ -1,21 +1,29 @@
 import * as express from 'express'
 import { graphqlHTTP } from 'express-graphql'
-import typeDefs from './graphql/types'
 import resolvers from './graphql/resolvers'
-import { makeExecutableSchema } from '@graphql-tools/schema'
 import { exec } from "child_process";
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { addResolversToSchema } from '@graphql-tools/schema';
+import { loadSchemaSync } from '@graphql-tools/load';
 
-const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers,
-})
+
+const schema = loadSchemaSync(__dirname + '/graphql/schema.graphql', { 
+    loaders: [
+      new GraphQLFileLoader()
+    ]
+});
+
+const schemaWithResolvers = addResolversToSchema({
+    schema,
+    resolvers,
+});
 
 const app = express()
 
 app.use(
   '/graphql',
   graphqlHTTP({
-    schema,
+    schema: schemaWithResolvers,
     graphiql: true,
   })
 )
