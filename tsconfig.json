@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES2016",
+    "module": "commonjs",
+    "lib": [],
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "baseUrl": "./",
+    "paths": {},
+    "rootDirs": [],
+    "typeRoots": [],
+    "types": [],
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
