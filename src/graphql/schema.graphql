@@ -1,6 +1,5 @@
 type Project @model {
   id: String
-  # edge: ProjectEdge
 }
 
 type Query {
