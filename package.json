@@ -11,6 +11,7 @@
     "@graphql-tools/load": "^7.1.2",
     "@graphql-tools/schema": "^8.0.3",
     "@graphql-tools/utils": "^8.0.2",
+    "@types/compose-function": "^0.0.30",
     "@types/express": "^4.17.13",
     "compose-function": "^3.0.3",
     "express": "^4.17.1",

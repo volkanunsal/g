@@ -95,6 +95,11 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/compose-function@^0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@types/compose-function/-/compose-function-0.0.30.tgz#1fbe97dda4caeb7f5e45a553dee8d46d91e48c5b"
+  integrity sha1-H76X3aTK639eRaVT3ujUbZHkjFs=
+
 "@types/connect@*":
   version "3.4.35"
   resolved "https://registry.yarnpkg.com/@types/connect/-/connect-3.4.35.tgz#5fcf6ae445e4021d1fc2219a4873cc73a3bb2ad1"

@@ -1,5 +1,8 @@
-import { compose } from "compose-function";
-import { modelDirectiveTransformer, modelDirectiveTypeDefs } from "./modelDirective";
+import compose from 'compose-function'
+import {
+  modelDirectiveTransformer,
+  modelDirectiveTypeDefs,
+} from './modelDirective'
 
 export const typeDefs = [modelDirectiveTypeDefs]
 
