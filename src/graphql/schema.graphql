@@ -1,3 +1,9 @@
+type Project @model {
+  id: String
+  # edge: ProjectEdge
+}
+
 type Query {
-  hello: String
+  hello: String @bang
+  boo: Project
 }

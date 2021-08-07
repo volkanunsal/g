@@ -3,7 +3,14 @@ import {
   modelDirectiveTransformer,
   modelDirectiveTypeDefs,
 } from './modelDirective'
+import {
+  bangDirectiveTransformer,
+  bangDirectiveTypeDefs,
+} from './bangDirective'
 
-export const typeDefs = [modelDirectiveTypeDefs]
+export const typeDefs = [modelDirectiveTypeDefs, bangDirectiveTypeDefs]
 
-export const transform = compose(modelDirectiveTransformer)
+export const transform = compose(
+  modelDirectiveTransformer,
+  bangDirectiveTransformer
+)

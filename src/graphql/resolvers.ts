@@ -1,5 +1,6 @@
 export default {
   Query: {
-    hello: () => 'world'
-  }
+    hello: () => 'world',
+    boo: () => 'world',
+  },
 }
