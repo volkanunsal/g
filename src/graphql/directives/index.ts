@@ -1,16 +1,7 @@
 import compose from 'compose-function'
-import {
-  modelDirectiveTransformer,
-  modelDirectiveTypeDefs,
-} from './modelDirective'
-import {
-  bangDirectiveTransformer,
-  bangDirectiveTypeDefs,
-} from './bangDirective'
+import * as mDirective from './modelDirective'
+import * as bangDirective from './bangDirective'
 
-export const typeDefs = [modelDirectiveTypeDefs, bangDirectiveTypeDefs]
+export const typeDefs = [mDirective.typeDefs, bangDirective.typeDefs]
 
-export const transform = compose(
-  modelDirectiveTransformer,
-  bangDirectiveTransformer
-)
+export const transform = compose(mDirective.transform, bangDirective.transform)

@@ -3,7 +3,7 @@ import { GraphQLSchema } from 'graphql'
 
 const directiveName = 'bang'
 
-export function bangDirectiveTransformer(schema: GraphQLSchema) {
+export function transform(schema: GraphQLSchema) {
   return mapSchema(schema, {
     [MapperKind.FIELD]: (fieldConfig) => {
       const directive = getDirective(schema, fieldConfig, directiveName)
@@ -18,6 +18,6 @@ export function bangDirectiveTransformer(schema: GraphQLSchema) {
   })
 }
 
-export const bangDirectiveTypeDefs = `
+export const typeDefs = `
   directive @bang on FIELD_DEFINITION
 `

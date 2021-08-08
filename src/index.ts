@@ -4,7 +4,6 @@ import resolvers from './graphql/resolvers'
 import { transform, typeDefs } from './graphql/directives'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import fs from 'fs'
-// import { exec } from 'child_process'
 
 const typeDefsFromFile = fs.readFileSync(
   __dirname + '/graphql/schema.graphql',
@@ -17,8 +16,6 @@ const schema = transform(
     resolvers,
   })
 )
-
-// console.log(JSON.stringify(schema.toConfig(), null, 2))
 
 const app = express()
 
@@ -33,5 +30,4 @@ app.use(
 app.listen(3000, () => {
   const url = 'http://localhost:3000/graphql'
   console.info(`Listening on ${url}`)
-  // exec(`open '${url}'`)
 })

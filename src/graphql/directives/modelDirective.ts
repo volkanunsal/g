@@ -16,7 +16,7 @@ function getInputType(type: string) {
   return 'ModelStringInput'
 }
 
-export function modelDirectiveTransformer(schema: GraphQLSchema) {
+export function transform(schema: GraphQLSchema) {
   // TODO: add the claims payload to the info object of the resolver
   const models = new Set()
   const auths = {}
@@ -317,9 +317,8 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
   return mergeSchemas({ schemas: [newSchema2], typeDefs: [t1], resolvers })
 }
 
-export const modelDirectiveTypeDefs = /*graphql*/ `
+export const typeDefs = /*graphql*/ `
   directive @connection(name: String, keyName: String, fields: [String!]) on FIELD_DEFINITION
-
 
   directive @model(
     queries: ModelQueryMap
