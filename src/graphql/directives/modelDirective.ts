@@ -12,6 +12,7 @@ function getRecord(payload: {
   args: Record<string, any>
   ctx: Record<string, any>
   auth: Record<string, any> | undefined
+  info: Record<string, any>
 }): Record<string, any> | null {
   // Apply auth rules, if they exist
   console.log('auth: ', payload.auth)
@@ -25,6 +26,7 @@ function listRecords(payload: {
   args: Record<string, any>
   ctx: Record<string, any>
   auth: Record<string, any> | undefined
+  info: Record<string, any>
 }): { items: Record<string, any>[]; nextToken: string | null } {
   // Apply auth rules, if they exist
   console.log('auth: ', payload.auth)
@@ -39,6 +41,7 @@ function createRecord(payload: {
   args: Record<string, any>
   ctx: Record<string, any>
   auth: Record<string, any> | undefined
+  info: Record<string, any>
 }): Record<string, any> | null {
   // Apply auth rules, if they exist
   console.log('auth: ', payload.auth)
@@ -52,6 +55,7 @@ function updateRecord(payload: {
   args: Record<string, any>
   ctx: Record<string, any>
   auth: Record<string, any> | undefined
+  info: Record<string, any>
 }): Record<string, any> | null {
   // Apply auth rules, if they exist
   console.log('auth: ', payload.auth)
@@ -120,24 +124,7 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
     },
   })
 
-  const newSchema2 = mapSchema(newSchema1, {
-    [MapperKind.OBJECT_TYPE]: (fieldConfig) => {
-      const modelDirective = getDirective(newSchema1, fieldConfig, 'model')
-      if (modelDirective) {
-        models.add(fieldConfig.name)
-
-        // Save the fields in a Key-Value format.
-        fields[fieldConfig.name] = Object.entries(
-          fieldConfig.toConfig().fields
-        ).reduce((s, kv) => ({ ...s, [kv[0]]: kv[1].type.toString() }), {})
-      }
-      const authDirective = getDirective(newSchema1, fieldConfig, 'auth')
-      if (authDirective) {
-        auths[fieldConfig.name] = authDirective[0]
-      }
-      return fieldConfig
-    },
-  })
+  const newSchema2 = mapSchema(newSchema1, {})
 
   // TODO: define new nodes for the missing types for Subscription
   // - onCreateXXX
@@ -300,19 +287,54 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
     }
   `
   const resolvers = {
+    // Define the resolvers for connections
+    ...Object.entries(connectionFields).reduce(
+      (s, item) => ({
+        ...s,
+        [item[0]]: item[1].reduce(
+          (s2, item2) => ({
+            ...s2,
+            [item2.fieldName]: (
+              obj: any,
+              args: Record<string, any>,
+              ctx: Record<string, any>,
+              info: Record<string, any>
+            ) => {
+              console.log(ctx)
+
+              const model = item[0]
+              return item2.isList
+                ? listRecords({
+                    model,
+                    obj,
+                    args,
+                    ctx,
+                    auth: auths[model],
+                    info,
+                  })
+                : getRecord({ model, obj, args, ctx, auth: auths[model], info })
+            },
+          }),
+          {}
+        ),
+      }),
+      {}
+    ),
     Query: modelArr.reduce(
       (s, model) => ({
         ...s,
         [`get${model}`]: (
           obj: undefined,
           args: Record<string, any>,
-          ctx: Record<string, any>
-        ) => getRecord({ model, obj, args, ctx, auth: auths[model] }),
+          ctx: Record<string, any>,
+          info: Record<string, any>
+        ) => getRecord({ model, obj, args, ctx, auth: auths[model], info }),
         [`list${pluralize(model)}`]: (
           obj: undefined,
           args: Record<string, any>,
-          ctx: Record<string, any>
-        ) => listRecords({ model, obj, args, ctx, auth: auths[model] }),
+          ctx: Record<string, any>,
+          info: Record<string, any>
+        ) => listRecords({ model, obj, args, ctx, auth: auths[model], info }),
       }),
       {}
     ),
@@ -322,17 +344,20 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
         [`create${model}`]: (
           obj: undefined,
           args: Record<string, any>,
-          ctx: Record<string, any>
-        ) => createRecord({ model, obj, args, ctx, auth: auths[model] }),
+          ctx: Record<string, any>,
+          info: Record<string, any>
+        ) => createRecord({ model, obj, args, ctx, auth: auths[model], info }),
         [`update${pluralize(model)}`]: (
           obj: undefined,
           args: Record<string, any>,
-          ctx: Record<string, any>
-        ) => updateRecord({ model, obj, args, ctx, auth: auths[model] }),
+          ctx: Record<string, any>,
+          info: Record<string, any>
+        ) => updateRecord({ model, obj, args, ctx, auth: auths[model], info }),
       }),
       {}
     ),
   }
+
   return mergeSchemas({ schemas: [newSchema2], typeDefs: [t1], resolvers })
 }
 
