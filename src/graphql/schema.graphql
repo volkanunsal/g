@@ -2,7 +2,9 @@ union ID = String | Int
 
 type Project @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}]) {
   id: ID!
-  resource: Tenant @connection
+  # WIP
+  tenant: Tenant @connection
+  tenants: [Tenant] @connection
 }
 
 type Tenant @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
@@ -69,7 +71,6 @@ type AlertSubscription @model @auth(rules: [{allow: owner}, {allow: public, oper
   id: ID!
   name: String!
 }
-
 
 type Query {
   hello: String

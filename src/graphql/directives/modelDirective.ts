@@ -72,10 +72,10 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
   const fields = {}
   const connectionFields: Record<
     string,
-    { fieldName: string; returnType: string }[]
+    { fieldName: string; returnType: string; isList: boolean }[]
   > = {}
 
-  const newSchema = mapSchema(schema, {
+  const newSchema1 = mapSchema(schema, {
     [MapperKind.OBJECT_TYPE]: (fieldConfig) => {
       const modelDirective = getDirective(schema, fieldConfig, 'model')
       if (modelDirective) {
@@ -101,18 +101,39 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
       if (connectionDirective) {
         const type = fieldConfig.astNode.type
         let returnType = ''
+        let isList = false
         if (type && 'type' in type && 'name' in type.type) {
           returnType = type.type.name.value
+          isList = true
         } else if ('name' in type) {
           returnType = type.name.value
         }
 
         if (returnType) {
           const connFieldsForModel = connectionFields[typeName] || []
-          connFieldsForModel.push({ fieldName, returnType })
+          connFieldsForModel.push({ fieldName, returnType, isList })
           connectionFields[typeName] = connFieldsForModel
           return null
         }
+      }
+      return fieldConfig
+    },
+  })
+
+  const newSchema2 = mapSchema(newSchema1, {
+    [MapperKind.OBJECT_TYPE]: (fieldConfig) => {
+      const modelDirective = getDirective(newSchema1, fieldConfig, 'model')
+      if (modelDirective) {
+        models.add(fieldConfig.name)
+
+        // Save the fields in a Key-Value format.
+        fields[fieldConfig.name] = Object.entries(
+          fieldConfig.toConfig().fields
+        ).reduce((s, kv) => ({ ...s, [kv[0]]: kv[1].type.toString() }), {})
+      }
+      const authDirective = getDirective(newSchema1, fieldConfig, 'auth')
+      if (authDirective) {
+        auths[fieldConfig.name] = authDirective[0]
       }
       return fieldConfig
     },
@@ -127,7 +148,7 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
 
   const t1 = `
     ${modelArr.map((model) => {
-      // Extract the fields of the model type from newSchema
+      // Extract the fields of the model type from newSchema1
       const modelFields = Object.entries(fields[model] || {})
       const fieldTypesString = modelFields.map(
         (item) => item[0] + `:` + getInputType(item[1] as string)
@@ -137,12 +158,12 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
         connFieldsForModel.length > 0
           ? `type ${model} {
         ${connFieldsForModel.map(
-          ({ fieldName, returnType }) => `${fieldName}(
+          ({ fieldName, returnType, isList }) => `${fieldName}(
           filter: Model${returnType}FilterInput,
           sortDirection: ModelSortDirection,
           limit: Int,
           nextToken: String
-        ): Model${returnType}Connection`
+        ): ${isList ? `Model${returnType}Connection` : returnType}`
         )}
       }`
           : ''
@@ -312,11 +333,10 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
       {}
     ),
   }
-  return mergeSchemas({ schemas: [newSchema], typeDefs: [t1], resolvers })
+  return mergeSchemas({ schemas: [newSchema2], typeDefs: [t1], resolvers })
 }
 
 export const modelDirectiveTypeDefs = /*graphql*/ `
-  directive @key(fields: [String!]!, name: String, queryField: String) on OBJECT
   directive @connection(name: String, keyName: String, fields: [String!]) on FIELD_DEFINITION
 
 
