@@ -2,66 +2,13 @@ import { mergeSchemas } from '@graphql-tools/merge'
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils'
 import { GraphQLSchema } from 'graphql'
 import pluralize from 'pluralize'
-
-// TODO: implement resolver for connection
-// TODO: @key
-
-function getRecord(payload: {
-  model: string
-  obj: undefined | Record<string, any>
-  args: Record<string, any>
-  ctx: Record<string, any>
-  auth: Record<string, any> | undefined
-  info: Record<string, any>
-}): Record<string, any> | null {
-  // Apply auth rules, if they exist
-  console.log('auth: ', payload.auth)
-  // TODO: get the record from ORM
-  return { id: 1 }
-}
-
-function listRecords(payload: {
-  model: string
-  obj: undefined | Record<string, any>
-  args: Record<string, any>
-  ctx: Record<string, any>
-  auth: Record<string, any> | undefined
-  info: Record<string, any>
-}): { items: Record<string, any>[]; nextToken: string | null } {
-  // Apply auth rules, if they exist
-  console.log('auth: ', payload.auth)
-  // TODO: get the records from ORM
-  const items = [{ id: 1 }]
-  return { items, nextToken: null }
-}
-
-function createRecord(payload: {
-  model: string
-  obj: undefined | Record<string, any>
-  args: Record<string, any>
-  ctx: Record<string, any>
-  auth: Record<string, any> | undefined
-  info: Record<string, any>
-}): Record<string, any> | null {
-  // Apply auth rules, if they exist
-  console.log('auth: ', payload.auth)
-  // TODO: get the records from ORM
-  return null
-}
-
-function updateRecord(payload: {
-  model: string
-  obj: undefined | Record<string, any>
-  args: Record<string, any>
-  ctx: Record<string, any>
-  auth: Record<string, any> | undefined
-  info: Record<string, any>
-}): Record<string, any> | null {
-  // Apply auth rules, if they exist
-  console.log('auth: ', payload.auth)
-  // TODO: get the records from ORM
-  return null
-}
+import {
+  getRecord,
+  listRecords,
+  createRecord,
+  updateRecord,
+  deleteRecord,
+} from '../../orm'
 
 function getInputType(type: string) {
   if (type.includes('Int')) return 'ModelIntInput'
@@ -175,6 +122,10 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
         	${fieldTypesString}
         }
 
+        input Delete${model}Input {
+        	id: ID
+        }
+
         input Model${model}ConditionInput {
           ${fieldTypesString}
           and: [Model${model}ConditionInput]
@@ -282,6 +233,7 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
         (model) => `
           create${model}(input: Create${model}Input!, condition: Model${model}ConditionInput): ${model}
           update${model}(input: Update${model}Input!, condition: Model${model}ConditionInput): ${model}
+          delete${model}(input: Delete${model}Input!, condition: Model${model}ConditionInput): ${model}
         `
       )}
     }
@@ -300,8 +252,6 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
               ctx: Record<string, any>,
               info: Record<string, any>
             ) => {
-              console.log(ctx)
-
               const model = item[0]
               return item2.isList
                 ? listRecords({
@@ -353,6 +303,12 @@ export function modelDirectiveTransformer(schema: GraphQLSchema) {
           ctx: Record<string, any>,
           info: Record<string, any>
         ) => updateRecord({ model, obj, args, ctx, auth: auths[model], info }),
+        [`delete${pluralize(model)}`]: (
+          obj: undefined,
+          args: Record<string, any>,
+          ctx: Record<string, any>,
+          info: Record<string, any>
+        ) => deleteRecord({ model, obj, args, ctx, auth: auths[model], info }),
       }),
       {}
     ),
