@@ -10,6 +10,10 @@ import {
 import * as orm from '../../orm';
 
 describe('modelDirective', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   function getSchema(typeDefsFromFile = '', resolvers = {}) {
     return transform(
       makeExecutableSchema({
@@ -92,10 +96,6 @@ describe('modelDirective', () => {
   });
 
   describe('@auth', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
     const schema = getSchema(`
       type Project @model @auth(rules: [{ allow: owner }]) {
         id: ID
@@ -170,8 +170,27 @@ describe('modelDirective', () => {
   });
 
   describe('@connection', () => {
-    it.todo('works');
-  });
+    // const schema = getSchema(`
+    //   type Resource @model {
+    //     id: ID
+    //   }
+    //
+    //   type Project @model {
+    //     id: ID
+    //     name: String
+    //     resource: Resource @connection
+    //     resources: [Resource] @connection
+    //   }
+    // `);
 
-  // TODO: test resolvers
+    describe('list type', () => {
+      it.todo('adds edge type to the connected field');
+      it.todo('adds resolver');
+    });
+
+    describe('singular type', () => {
+      it.todo('does not add edge type to the connected field');
+      it.todo('adds resolver');
+    });
+  });
 });
