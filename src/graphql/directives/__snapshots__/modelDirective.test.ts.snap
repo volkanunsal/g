@@ -1,0 +1,288 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`modelDirective @model root mutations adds: createProject 1`] = `
+Object {
+  "arguments": Array [
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "input",
+      },
+      "type": Object {
+        "kind": "NonNullType",
+        "type": Object {
+          "kind": "NamedType",
+          "name": Object {
+            "kind": "Name",
+            "value": "CreateProjectInput",
+          },
+        },
+      },
+    },
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "condition",
+      },
+      "type": Object {
+        "kind": "NamedType",
+        "name": Object {
+          "kind": "Name",
+          "value": "ModelProjectConditionInput",
+        },
+      },
+    },
+  ],
+  "description": undefined,
+  "directives": Array [],
+  "kind": "FieldDefinition",
+  "name": Object {
+    "kind": "Name",
+    "value": "createProject",
+  },
+  "type": Object {
+    "kind": "NamedType",
+    "name": Object {
+      "kind": "Name",
+      "value": "Project",
+    },
+  },
+}
+`;
+
+exports[`modelDirective @model root mutations adds: deleteProject 1`] = `
+Object {
+  "arguments": Array [
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "input",
+      },
+      "type": Object {
+        "kind": "NonNullType",
+        "type": Object {
+          "kind": "NamedType",
+          "name": Object {
+            "kind": "Name",
+            "value": "DeleteProjectInput",
+          },
+        },
+      },
+    },
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "condition",
+      },
+      "type": Object {
+        "kind": "NamedType",
+        "name": Object {
+          "kind": "Name",
+          "value": "ModelProjectConditionInput",
+        },
+      },
+    },
+  ],
+  "description": undefined,
+  "directives": Array [],
+  "kind": "FieldDefinition",
+  "name": Object {
+    "kind": "Name",
+    "value": "deleteProject",
+  },
+  "type": Object {
+    "kind": "NamedType",
+    "name": Object {
+      "kind": "Name",
+      "value": "Project",
+    },
+  },
+}
+`;
+
+exports[`modelDirective @model root mutations adds: updateProject 1`] = `
+Object {
+  "arguments": Array [
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "input",
+      },
+      "type": Object {
+        "kind": "NonNullType",
+        "type": Object {
+          "kind": "NamedType",
+          "name": Object {
+            "kind": "Name",
+            "value": "UpdateProjectInput",
+          },
+        },
+      },
+    },
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "condition",
+      },
+      "type": Object {
+        "kind": "NamedType",
+        "name": Object {
+          "kind": "Name",
+          "value": "ModelProjectConditionInput",
+        },
+      },
+    },
+  ],
+  "description": undefined,
+  "directives": Array [],
+  "kind": "FieldDefinition",
+  "name": Object {
+    "kind": "Name",
+    "value": "updateProject",
+  },
+  "type": Object {
+    "kind": "NamedType",
+    "name": Object {
+      "kind": "Name",
+      "value": "Project",
+    },
+  },
+}
+`;
+
+exports[`modelDirective @model root queries adds: getProject 1`] = `
+Object {
+  "arguments": Array [
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "id",
+      },
+      "type": Object {
+        "kind": "NonNullType",
+        "type": Object {
+          "kind": "NamedType",
+          "name": Object {
+            "kind": "Name",
+            "value": "ID",
+          },
+        },
+      },
+    },
+  ],
+  "description": undefined,
+  "directives": Array [],
+  "kind": "FieldDefinition",
+  "name": Object {
+    "kind": "Name",
+    "value": "getProject",
+  },
+  "type": Object {
+    "kind": "NamedType",
+    "name": Object {
+      "kind": "Name",
+      "value": "Project",
+    },
+  },
+}
+`;
+
+exports[`modelDirective @model root queries adds: listProjects 1`] = `
+Object {
+  "arguments": Array [
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "filter",
+      },
+      "type": Object {
+        "kind": "NamedType",
+        "name": Object {
+          "kind": "Name",
+          "value": "ModelProjectFilterInput",
+        },
+      },
+    },
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "limit",
+      },
+      "type": Object {
+        "kind": "NamedType",
+        "name": Object {
+          "kind": "Name",
+          "value": "Int",
+        },
+      },
+    },
+    Object {
+      "defaultValue": undefined,
+      "description": undefined,
+      "directives": Array [],
+      "kind": "InputValueDefinition",
+      "name": Object {
+        "kind": "Name",
+        "value": "nextToken",
+      },
+      "type": Object {
+        "kind": "NamedType",
+        "name": Object {
+          "kind": "Name",
+          "value": "String",
+        },
+      },
+    },
+  ],
+  "description": undefined,
+  "directives": Array [],
+  "kind": "FieldDefinition",
+  "name": Object {
+    "kind": "Name",
+    "value": "listProjects",
+  },
+  "type": Object {
+    "kind": "NamedType",
+    "name": Object {
+      "kind": "Name",
+      "value": "ModelProjectConnection",
+    },
+  },
+}
+`;

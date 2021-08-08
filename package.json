@@ -6,11 +6,12 @@
   "scripts": {
     "start": "ts-node src",
     "test": "jest -c jest.config.ts",
-    "test:watch": "jest -w"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@graphql-tools/graphql-file-loader": "^7.0.2",
     "@graphql-tools/load": "^7.1.2",
+    "@graphql-tools/optimize": "^1.0.1",
     "@graphql-tools/schema": "^8.0.3",
     "@graphql-tools/utils": "^8.0.2",
     "@types/compose-function": "^0.0.30",
