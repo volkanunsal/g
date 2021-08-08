@@ -10,9 +10,8 @@
     "baseUrl": "./",
     "paths": {},
     "rootDirs": [],
-    "typeRoots": [],
-    "types": [],
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "include": ["src", "src/**/*.ts"]
 }
