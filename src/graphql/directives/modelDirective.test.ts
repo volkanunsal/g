@@ -7,7 +7,7 @@ import {
   GraphQLSchema,
   ObjectTypeDefinitionNode,
 } from 'graphql';
-import { getRecord } from '../../orm';
+import * as orm from '../../orm';
 
 describe('modelDirective', () => {
   function getSchema(typeDefsFromFile = '', resolvers = {}) {
@@ -92,25 +92,80 @@ describe('modelDirective', () => {
   });
 
   describe('@auth', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
     const schema = getSchema(`
       type Project @model @auth(rules: [{ allow: owner }]) {
         id: ID
         name: String
       }
     `);
-    it('passes auth object to orm', () => {
-      const obj = undefined;
-      const args = { a: 1 };
-      const ctx = { some: 'thing' };
-      const info = { foo: 'bar' } as any;
+
+    const obj = undefined;
+    const args = { a: 1 };
+    const ctx = { some: 'thing' };
+    const info = { foo: 'bar' } as any;
+    const auth = { rules: [{ allow: 'owner' }] };
+
+    function invokeQueryFieldResolver(field: string) {
       // Invoke the resolver
       (schema.getTypeMap().Query as GraphQLObjectType)
         .getFields()
-        .getProject.resolve(obj, args, ctx, info);
+        [field].resolve(obj, args, ctx, info);
+    }
 
-      // Verify the ORM method has been invoked with `auth` object
-      const auth = { rules: [{ allow: 'owner' }] };
-      expect(getRecord).toHaveBeenCalledWith(expect.objectContaining({ auth }));
+    function invokeMutationFieldResolver(field: string) {
+      // Invoke the resolver
+      (schema.getTypeMap().Mutation as GraphQLObjectType)
+        .getFields()
+        [field].resolve(obj, args, ctx, info);
+    }
+
+    describe('get: ', () => {
+      it('passes auth object to orm', () => {
+        invokeQueryFieldResolver('getProject');
+        expect(orm.getRecord).toHaveBeenCalledWith(
+          expect.objectContaining({ auth })
+        );
+      });
+    });
+
+    describe('list: ', () => {
+      it('passes auth object to orm', () => {
+        invokeQueryFieldResolver('listProjects');
+        expect(orm.listRecords).toHaveBeenCalledWith(
+          expect.objectContaining({ auth })
+        );
+      });
+    });
+
+    describe('create: ', () => {
+      it('passes auth object to orm', () => {
+        invokeMutationFieldResolver('createProject');
+        expect(orm.createRecord).toHaveBeenCalledWith(
+          expect.objectContaining({ auth })
+        );
+      });
+    });
+
+    describe('update: ', () => {
+      it('passes auth object to orm', () => {
+        invokeMutationFieldResolver('updateProject');
+        expect(orm.updateRecord).toHaveBeenCalledWith(
+          expect.objectContaining({ auth })
+        );
+      });
+    });
+
+    describe('delete: ', () => {
+      it('passes auth object to orm', () => {
+        invokeMutationFieldResolver('deleteProject');
+        expect(orm.deleteRecord).toHaveBeenCalledWith(
+          expect.objectContaining({ auth })
+        );
+      });
     });
   });
 

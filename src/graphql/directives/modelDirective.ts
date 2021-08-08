@@ -1,93 +1,93 @@
-import { mergeSchemas } from '@graphql-tools/merge'
-import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils'
-import { GraphQLSchema } from 'graphql'
-import pluralize from 'pluralize'
+import { mergeSchemas } from '@graphql-tools/merge';
+import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils';
+import { GraphQLSchema } from 'graphql';
+import pluralize from 'pluralize';
 import {
   getRecord,
   listRecords,
   createRecord,
   updateRecord,
   deleteRecord,
-} from '../../orm'
+} from '../../orm';
 
 function getInputType(type: string) {
-  if (type.includes('Int')) return 'ModelIntInput'
-  if (type.includes('ID')) return 'ModelIDInput'
-  return 'ModelStringInput'
+  if (type.includes('Int')) return 'ModelIntInput';
+  if (type.includes('ID')) return 'ModelIDInput';
+  return 'ModelStringInput';
 }
 
 export function transform(schema: GraphQLSchema) {
   // TODO: add the claims payload to the info object of the resolver
-  const models = new Set()
-  const auths = {}
-  const fields = {}
+  const models = new Set();
+  const auths = {};
+  const fields = {};
   const connectionFields: Record<
     string,
     { fieldName: string; returnType: string; isList: boolean }[]
-  > = {}
+  > = {};
 
   const newSchema1 = mapSchema(schema, {
     [MapperKind.OBJECT_TYPE]: (fieldConfig) => {
-      const modelDirective = getDirective(schema, fieldConfig, 'model')
+      const modelDirective = getDirective(schema, fieldConfig, 'model');
       if (modelDirective) {
-        models.add(fieldConfig.name)
+        models.add(fieldConfig.name);
 
         // Save the fields in a Key-Value format.
         fields[fieldConfig.name] = Object.entries(
           fieldConfig.toConfig().fields
-        ).reduce((s, kv) => ({ ...s, [kv[0]]: kv[1].type.toString() }), {})
+        ).reduce((s, kv) => ({ ...s, [kv[0]]: kv[1].type.toString() }), {});
       }
-      const authDirective = getDirective(schema, fieldConfig, 'auth')
+      const authDirective = getDirective(schema, fieldConfig, 'auth');
       if (authDirective) {
-        auths[fieldConfig.name] = authDirective[0]
+        auths[fieldConfig.name] = authDirective[0];
       }
-      return fieldConfig
+      return fieldConfig;
     },
     [MapperKind.FIELD]: (fieldConfig, fieldName, typeName) => {
       const connectionDirective = getDirective(
         schema,
         fieldConfig,
         'connection'
-      )
+      );
       if (connectionDirective) {
-        const type = fieldConfig.astNode.type
-        let returnType = ''
-        let isList = false
+        const type = fieldConfig.astNode.type;
+        let returnType = '';
+        let isList = false;
         if (type && 'type' in type && 'name' in type.type) {
-          returnType = type.type.name.value
-          isList = true
+          returnType = type.type.name.value;
+          isList = true;
         } else if ('name' in type) {
-          returnType = type.name.value
+          returnType = type.name.value;
         }
 
         if (returnType) {
-          const connFieldsForModel = connectionFields[typeName] || []
-          connFieldsForModel.push({ fieldName, returnType, isList })
-          connectionFields[typeName] = connFieldsForModel
-          return null
+          const connFieldsForModel = connectionFields[typeName] || [];
+          connFieldsForModel.push({ fieldName, returnType, isList });
+          connectionFields[typeName] = connFieldsForModel;
+          return null;
         }
       }
-      return fieldConfig
+      return fieldConfig;
     },
-  })
+  });
 
-  const newSchema2 = mapSchema(newSchema1, {})
+  const newSchema2 = mapSchema(newSchema1, {});
 
   // TODO: define new nodes for the missing types for Subscription
   // - onCreateXXX
   // - onUpdateXXX
   // - onDeleteXXX
 
-  const modelArr = Array.from(models) as string[]
+  const modelArr = Array.from(models) as string[];
 
   const t1 = /*GraphQL*/ `
     ${modelArr.map((model) => {
       // Extract the fields of the model type from newSchema1
-      const modelFields = Object.entries(fields[model] || {})
+      const modelFields = Object.entries(fields[model] || {});
       const fieldTypesString = modelFields.map(
         (item) => item[0] + `:` + getInputType(item[1] as string)
-      )
-      const connFieldsForModel = connectionFields[model] || []
+      );
+      const connFieldsForModel = connectionFields[model] || [];
       const connExtensions =
         connFieldsForModel.length > 0
           ? `type ${model} {
@@ -100,7 +100,7 @@ export function transform(schema: GraphQLSchema) {
         ): ${isList ? `Model${returnType}Connection` : returnType}`
         )}
       }`
-          : ''
+          : '';
 
       return /*GraphQL*/ `
         input Model${model}FilterInput {
@@ -135,7 +135,7 @@ export function transform(schema: GraphQLSchema) {
 
         ${connExtensions}
         
-      `
+      `;
     })}
 
     input ModelIDInput {
@@ -237,7 +237,7 @@ export function transform(schema: GraphQLSchema) {
         `
       )}
     }
-  `
+  `;
   const resolvers = {
     // Define the resolvers for connections
     ...Object.entries(connectionFields).reduce(
@@ -252,7 +252,7 @@ export function transform(schema: GraphQLSchema) {
               ctx: Record<string, any>,
               info: Record<string, any>
             ) => {
-              const model = item[0]
+              const model = item[0];
               return item2.isList
                 ? listRecords({
                     model,
@@ -262,7 +262,14 @@ export function transform(schema: GraphQLSchema) {
                     auth: auths[model],
                     info,
                   })
-                : getRecord({ model, obj, args, ctx, auth: auths[model], info })
+                : getRecord({
+                    model,
+                    obj,
+                    args,
+                    ctx,
+                    auth: auths[model],
+                    info,
+                  });
             },
           }),
           {}
@@ -297,13 +304,13 @@ export function transform(schema: GraphQLSchema) {
           ctx: Record<string, any>,
           info: Record<string, any>
         ) => createRecord({ model, obj, args, ctx, auth: auths[model], info }),
-        [`update${pluralize(model)}`]: (
+        [`update${model}`]: (
           obj: undefined,
           args: Record<string, any>,
           ctx: Record<string, any>,
           info: Record<string, any>
         ) => updateRecord({ model, obj, args, ctx, auth: auths[model], info }),
-        [`delete${pluralize(model)}`]: (
+        [`delete${model}`]: (
           obj: undefined,
           args: Record<string, any>,
           ctx: Record<string, any>,
@@ -312,9 +319,9 @@ export function transform(schema: GraphQLSchema) {
       }),
       {}
     ),
-  }
+  };
 
-  return mergeSchemas({ schemas: [newSchema2], typeDefs: [t1], resolvers })
+  return mergeSchemas({ schemas: [newSchema2], typeDefs: [t1], resolvers });
 }
 
 export const typeDefs = /*graphql*/ `
@@ -368,4 +375,4 @@ export const typeDefs = /*graphql*/ `
   enum AuthStrategy { owner groups private public }
   enum AuthProvider { apiKey iam oidc userPools }
   enum ModelOperation { create update delete read }
-`
+`;
