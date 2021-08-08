@@ -80,7 +80,7 @@ export function transform(schema: GraphQLSchema) {
 
   const modelArr = Array.from(models) as string[]
 
-  const t1 = `
+  const t1 = /*GraphQL*/ `
     ${modelArr.map((model) => {
       // Extract the fields of the model type from newSchema1
       const modelFields = Object.entries(fields[model] || {})
@@ -92,7 +92,7 @@ export function transform(schema: GraphQLSchema) {
         connFieldsForModel.length > 0
           ? `type ${model} {
         ${connFieldsForModel.map(
-          ({ fieldName, returnType, isList }) => `${fieldName}(
+          ({ fieldName, returnType, isList }) => /*GraphQL*/ `${fieldName}(
           filter: Model${returnType}FilterInput,
           sortDirection: ModelSortDirection,
           limit: Int,
@@ -102,7 +102,7 @@ export function transform(schema: GraphQLSchema) {
       }`
           : ''
 
-      return `
+      return /*GraphQL*/ `
         input Model${model}FilterInput {
           ${fieldTypesString}
           and: [Model${model}FilterInput]
