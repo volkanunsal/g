@@ -5,21 +5,11 @@ import { transform, typeDefs } from './graphql/directives'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import fs from 'fs'
 // import { exec } from 'child_process'
-// import { parse, DocumentNode } from 'graphql'
 
 const typeDefsFromFile = fs.readFileSync(
   __dirname + '/graphql/schema.graphql',
   'utf-8'
 )
-
-// function completeMissingTypes(docNode: DocumentNode) {
-//   // TODO: traverse through the document node
-//   // TODO: find the types with the "model" directive
-//   // TODO: define new nodes for the missing types
-//   // TODO: generate executable schema ast from document ast
-//   // TODO: run printSchema and write the output to the file
-//   return docNode
-// }
 
 const schema = transform(
   makeExecutableSchema({
@@ -28,7 +18,7 @@ const schema = transform(
   })
 )
 
-console.log(JSON.stringify(schema.toConfig(), null, 2))
+// console.log(JSON.stringify(schema.toConfig(), null, 2))
 
 const app = express()
 

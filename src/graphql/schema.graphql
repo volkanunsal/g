@@ -1,8 +1,153 @@
-type Project @model {
-  id: String
+union ID = String | Int
+
+type Project @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}]) {
+  id: ID!
+  resource: Tenant @connection
 }
 
-type Query {
-  hello: String @bang
-  boo: Project
+type Tenant @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
 }
+
+type Listing @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type Development @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type StreetscapeAsset @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type StreetscapeIssue @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type Event @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type Property @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type PastTenant @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type District @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type Contact @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type Building @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type City @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type Dashboard @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type DataPanel @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type DataPanelLayer @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+}
+
+type AlertSubscription @model @auth(rules: [{allow: owner}, {allow: public, operations: [read]}])  {
+  id: ID!
+  name: String!
+}
+
+
+type Query {
+  hello: String
+  boo: String
+}
+
+# -----
+
+# input CreateOrgUserInput {
+# 	id: ID
+# 	email: String!
+# 	orgId: ID!
+# 	isAdmin: Boolean!
+# }
+
+# input ModelOrgUserConditionInput {
+# 	email: ModelStringInput
+# 	orgId: ModelIDInput
+# 	isAdmin: ModelBooleanInput
+# 	and: [ModelOrgUserConditionInput]
+# 	or: [ModelOrgUserConditionInput]
+# 	not: ModelOrgUserConditionInput
+# }
+
+
+# type Org @aws_iam
+# @aws_cognito_user_pools {
+# 	id: ID!
+# 	name: String!
+# 	address: String!
+# 	jurisdictions: [String]
+# 	offices: [String]
+# 	admins: [String]
+# 	createdAt: AWSDateTime!
+# 	updatedAt: AWSDateTime!
+# 	users(
+# 		filter: ModelOrgUserFilterInput,
+# 		sortDirection: ModelSortDirection,
+# 		limit: Int,
+# 		nextToken: String
+# 	): ModelOrgUserConnection
+# 		@aws_iam
+# @aws_cognito_user_pools
+# 	elections(
+# 		filter: ModelElectionFilterInput,
+# 		sortDirection: ModelSortDirection,
+# 		limit: Int,
+# 		nextToken: String
+# 	): ModelElectionConnection
+# 		@aws_iam
+# @aws_cognito_user_pools
+# }
+
+# type OrgUser @aws_iam
+# @aws_cognito_user_pools {
+# 	id: ID!
+# 	email: String!
+# 	orgId: ID!
+# 	isAdmin: Boolean!
+# 	createdAt: AWSDateTime!
+# 	updatedAt: AWSDateTime!
+# 	org: Org
+# 		@aws_iam
+# 	owner: String
+# }
+
+# type Subscription {
+# 	onCreateElection(owner: String): Election
+# 		@aws_subscribe(mutations: ["createElection"])
+# @aws_iam
+# @aws_cognito_user_pools
+# 	onUpdateElection(owner: String): Election
+# 		@aws_subscribe(mutations: ["updateElection"])
+# @aws_iam
+# @aws_cognito_user_pools
+# 	onDeleteElection(owner: String): Election
+# 		@aws_subscribe(mutations: ["deleteElection"])
+# @aws_iam
+# @aws_cognito_user_pools
+# }
+

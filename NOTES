@@ -1,4 +1,8 @@
 ======================================
+
+The goal of this repo is to reverse engineer the server side type generation framework of Amplify.
+
+======================================
 2021-08-07 09:15:04
 
 How might I add arbitrary types to the schema root query for every type with the "model" extension?
